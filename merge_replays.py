@@ -35,18 +35,18 @@ class MergeReplaysApp:
         # Set window background
         self.root.configure(bg=self.colors['bg'])
         
-        # Config file path - works for both script and exe
-        if getattr(sys, 'frozen', False):
-            # Running as compiled executable
-            if hasattr(sys, '_MEIPASS'):
-                # PyInstaller bundle
+        # Config file path - use AppData Local for Windows
+        appdata_local = os.getenv('LOCALAPPDATA')
+        if appdata_local:
+            config_dir = Path(appdata_local) / "MergeReplays"
+            config_dir.mkdir(exist_ok=True)  # Create directory if it doesn't exist
+            self.config_file = config_dir / "config.json"
+        else:
+            # Fallback if LOCALAPPDATA not available (shouldn't happen on Windows)
+            if getattr(sys, 'frozen', False):
                 self.config_file = Path(sys.executable).parent / "config.json"
             else:
-                # Other bundlers
-                self.config_file = Path(sys.executable).parent / "config.json"
-        else:
-            # Running as script
-            self.config_file = Path(__file__).parent / "config.json"
+                self.config_file = Path(__file__).parent / "config.json"
         
         # Variables
         self.source_folder = tk.StringVar()
@@ -251,7 +251,36 @@ class MergeReplaysApp:
                                       selectcolor=self.colors['frame_bg'],
                                       anchor='w',
                                       cursor='hand2')
-        delete_check.pack(anchor='w')
+        delete_check.pack(anchor='w', pady=(0, 8))
+        
+        # Config file location info
+        config_info_frame = tk.Frame(options_section, bg=self.colors['frame_bg'])
+        config_info_frame.pack(fill=tk.X, pady=(5, 0))
+        
+        config_info_label = tk.Label(config_info_frame,
+                                    text="Config file:",
+                                    font=('Segoe UI', 8),
+                                    bg=self.colors['frame_bg'],
+                                    fg=self.colors['text_secondary'],
+                                    anchor='w')
+        config_info_label.pack(side=tk.LEFT)
+        
+        config_path_label = tk.Label(config_info_frame,
+                                     text=str(self.config_file),
+                                     font=('Segoe UI', 8),
+                                     bg=self.colors['frame_bg'],
+                                     fg=self.colors['text_secondary'],
+                                     anchor='w',
+                                     cursor='hand2')
+        config_path_label.pack(side=tk.LEFT, padx=(5, 0))
+        
+        # Make config path clickable to open folder
+        def open_config_folder(event):
+            import subprocess
+            folder = str(self.config_file.parent)
+            subprocess.Popen(f'explorer /select,"{self.config_file}"' if self.config_file.exists() else f'explorer "{folder}"')
+        
+        config_path_label.bind('<Button-1>', open_config_folder)
         
         # Progress section
         progress_section = tk.Frame(content_frame, bg=self.colors['frame_bg'])
