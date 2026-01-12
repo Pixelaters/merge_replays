@@ -26,3 +26,8 @@ Thumbs.db
 # Project specific
 *.mp4
 *.m4a
+
+# Build artifacts
+build/
+dist/
+*.spec

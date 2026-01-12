@@ -27,12 +27,46 @@ A GUI application to merge matching MP4 and M4A files into a single file with tw
 
 ## Installation
 
-1. Install Python dependencies (optional, for drag & drop):
+### Option 1: Run from Source
+
+1. Install Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-Note: `tkinterdnd2` is optional. The app will work without it, but drag & drop won't be available.
+Note: `tkinterdnd2` is optional. The app will work without it.
+
+2. Run the application:
+```bash
+python merge_replays.py
+```
+
+### Option 2: Use Pre-built Executable
+
+A standalone `.exe` file is available in the `dist` folder. Simply run `MergeReplays.exe` - no Python installation required!
+
+**Note:** FFmpeg must still be installed and in your PATH for the executable to work.
+
+### Building Your Own Executable
+
+To build the executable yourself:
+
+1. Install PyInstaller:
+```bash
+pip install pyinstaller
+```
+
+2. Run the build script:
+```bash
+build.bat
+```
+
+Or manually:
+```bash
+python -m PyInstaller --onefile --windowed --name "MergeReplays" merge_replays.py
+```
+
+The executable will be created in the `dist` folder.
 
 ## Usage
 

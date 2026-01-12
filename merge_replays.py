@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
@@ -34,8 +35,18 @@ class MergeReplaysApp:
         # Set window background
         self.root.configure(bg=self.colors['bg'])
         
-        # Config file path
-        self.config_file = Path(__file__).parent / "config.json"
+        # Config file path - works for both script and exe
+        if getattr(sys, 'frozen', False):
+            # Running as compiled executable
+            if hasattr(sys, '_MEIPASS'):
+                # PyInstaller bundle
+                self.config_file = Path(sys.executable).parent / "config.json"
+            else:
+                # Other bundlers
+                self.config_file = Path(sys.executable).parent / "config.json"
+        else:
+            # Running as script
+            self.config_file = Path(__file__).parent / "config.json"
         
         # Variables
         self.source_folder = tk.StringVar()
